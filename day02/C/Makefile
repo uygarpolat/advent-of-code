@@ -1,4 +1,4 @@
-NAME = day01
+NAME = day02
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 

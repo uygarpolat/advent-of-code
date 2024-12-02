@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "libft/libft.h"
+#include "../../libft/libft.h"
 
 void    bubble_sort(int *list)
 {
