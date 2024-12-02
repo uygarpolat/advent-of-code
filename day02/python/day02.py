@@ -29,15 +29,13 @@ def main():
                 if (data[i + 1] > data[i] and data[i + 1] - data[i] <= 3):
                     continue
                 else:
-                    # counter -= 1
-                    counter -= one_more_chance(new_data, i, 1) # Return 0 if new chance is successful, 1 if not.
+                    counter -= one_more_chance(new_data, i, 1)
                     break
             counter += 1
             for i in range(len(data) - 1):
                 if (data[i + 1] < data[i] and data[i] - data[i + 1] <= 3):
                     continue
                 else:
-                    # counter -= 1
                     counter -= one_more_chance(new_data2, i, -1)
                     break
             counter += 1
