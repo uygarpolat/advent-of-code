@@ -1,7 +1,7 @@
 def calculate_total(matches):
     counter = 0
     for x in matches:
-        num1, num2 = map(int, x.lstrip("mul(").rstrip(")").split(","))
+        num1, num2 = map(int, x.removeprefix("mul(").removesuffix(")").split(","))
         counter = counter + num1 * num2
     return counter
 
