@@ -15,11 +15,6 @@ int *split_to_int_array(char **split, int skip) {
         if (i != skip)
             array[++k] = ft_atoi(split[i]);
     }
-    i = -1;
-    printf("Skip is %d. Array is ", skip);
-    while(array[++i])
-        printf("%d-", array[i]);
-    printf("\n");
     return (array);
 }
 
