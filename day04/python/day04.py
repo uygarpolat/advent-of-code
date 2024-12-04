@@ -1,7 +1,3 @@
-def read_grid(file_path):
-    with open(file_path, 'r') as f:
-        return [list(line.strip()) for line in f]
-
 def search_xmas(grid, row, col, sequence):
 
     counter = 0
@@ -30,7 +26,6 @@ def search_xmas(grid, row, col, sequence):
 
 def search_x_mas(grid, row, col, sequence):
 
-    r, c = row, col
     counter = 0
     rows = len(grid)
     cols = len(grid[0])
@@ -41,17 +36,19 @@ def search_x_mas(grid, row, col, sequence):
     found = 0
     for i, char in enumerate(sequence):
         for dr, dc in directions:
-            if grid[r + dr][c + dc] == char and grid[r - dr][c - dc] == sequence[(i + 1) % 2]:
+            if grid[row + dr][col + dc] == char and grid[row - dr][col - dc] == sequence[(i + 1) % 2]:
                 found += 1
     if found == 2:
         return 1
     return 0
 
 def main():
+
+    with open("input.txt", 'r') as f:
+        grid = [list(line.strip()) for line in f]
+    
     xmas_counter = 0
     x_mas_counter = 0
-    grid = read_grid("input.txt")
-    
     sequence_xmas = "XMAS"
     sequence_mas = "MAS"
     middle_index = len(sequence_mas) // 2
