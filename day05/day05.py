@@ -39,7 +39,7 @@ def lowest_location(seed, maps):
     return payload
 
 def main():
-    file_path = "input2.txt"
+    file_path = "input.txt"
     with open(file_path, 'r') as file:
         seeds, maps = parse_file(file_path, file)
         lowest_loc = 100000000000
@@ -48,6 +48,7 @@ def main():
             if lowest_loc > seed_loc:
                 lowest_loc = seed_loc
         print(lowest_loc)
+
         lowest_loc = 100000000000
         for i, seed in enumerate(seeds):
             if (i % 2 != 0):
@@ -57,7 +58,8 @@ def main():
                     seed_loc = lowest_location(seed + j, maps)
                     if lowest_loc > seed_loc:
                         lowest_loc = seed_loc
-            print(f"seed {i + 1} is done")
+            print(f"Seed {i + 1} is done")
         print(lowest_loc)
+
 if __name__ == "__main__":
     main()
