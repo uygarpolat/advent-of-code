@@ -63,8 +63,8 @@ def main():
                 break
         if flag == 0:
             total += sublist[len(sublist) // 2]
-    print (f"Answer for the first part: {total}")
-    print (f"Answer for the first part: {total_wrong}")
+    print (f" Answer for the first part: {total}")
+    print (f"Answer for the second part: {total_wrong}")
 
 if __name__ == "__main__":
     main()
