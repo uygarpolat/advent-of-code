@@ -34,8 +34,6 @@ def lowest_location(seed, maps):
             if (payload >= maps[x][y][1] and payload < maps[x][y][1] + maps[x][y][2]):
                 payload = maps[x][y][0] + (payload - maps[x][y][1])
                 break
-        # print(payload)
-    # print(f"returning payload {payload}")
     return payload
 
 def main():

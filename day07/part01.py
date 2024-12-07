@@ -22,7 +22,6 @@ def hand_sort_key(hand):
     original_order_values = get_card_strengths(hand)
     return (hand_type_rank, original_order_values)
 
-
 def get_hand_type(hand):
     freq = sorted(Counter(hand).values(), reverse=True)
     if freq == [5]:
@@ -40,7 +39,6 @@ def get_hand_type(hand):
     else:
         return "high_card"
 
-
 def main():
     file_path = "input.txt"
     with open(file_path, 'r') as file:
@@ -52,13 +50,12 @@ def main():
             parts = line.split()
             hands.append(parts[0])
             bids[parts[0]] = int(parts[1])
-            type.append(get_hand_type(parts[0]))
 
         sorted_hands = sorted(hands, key=hand_sort_key)
         res = 0
         for i, hand in enumerate(sorted_hands):
             res += bids[hand] * (len(sorted_hands) - i)
-        print(res)
+        print(f"Part 1 solution is {res}")
 
 if __name__ == "__main__":
     main()
