@@ -9,7 +9,7 @@ def is_in_grid(grid, loc):
         return True
     return False
 
-def get_locations(grid):
+def get_antenna_locations(grid):
     dict = {}
     rows = len(grid)
     cols = len(grid[0])
@@ -53,21 +53,19 @@ def precise_anti_node_loc(a, b, grid, flag):
 def get_anti_nodes(value, grid, anti_nodes_general, flag):
     anti_nodes_local = []
     if flag:
-        for val in value:
-            if not val in anti_nodes_general:
-                anti_nodes_general.append(val)
+        elements_to_add = set(value) - set(anti_nodes_general)
+        anti_nodes_general.extend(elements_to_add)
     for a, b in combinations(value, 2):
         locs = precise_anti_node_loc(a, b, grid, flag)
-        for loc in locs:
-            if not loc in anti_nodes_general and not loc in anti_nodes_local:
-                anti_nodes_local.append(loc)
+        elements_to_add = set(locs) - (set(anti_nodes_local) | set(anti_nodes_general))
+        anti_nodes_local.extend(elements_to_add)
     return anti_nodes_local
 
 def main():
     file_path = "input.txt"
     with open(file_path, 'r') as file:
         grid = [list(line.strip()) for line in file]
-        locs = get_locations(grid)
+        locs = get_antenna_locations(grid)
         for i in range(2):
             anti_nodes_local = []
             anti_nodes_general = []
