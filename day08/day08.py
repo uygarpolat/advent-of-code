@@ -9,7 +9,7 @@ def is_in_grid(grid, loc):
         return True
     return False
 
-def get_antenna_locations(grid):
+def get_antenna_info(grid):
     dict = {}
     rows = len(grid)
     cols = len(grid[0])
@@ -65,7 +65,7 @@ def main():
     file_path = "input.txt"
     with open(file_path, 'r') as file:
         grid = [list(line.strip()) for line in file]
-        locs = get_antenna_locations(grid)
+        locs = get_antenna_info(grid)
         for i in range(2):
             anti_nodes_local = []
             anti_nodes_general = []
