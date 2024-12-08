@@ -31,7 +31,6 @@ def change_dir(dir):
 
 def traverse(grid, start_loc, flag=False, dir=(-1,0)):
     count = 1
-    # dir = (-1, 0)
     temp = {}
     hits = [start_loc]
     traversing = True
@@ -42,7 +41,6 @@ def traverse(grid, start_loc, flag=False, dir=(-1,0)):
 
         next_loc = tuple(a + b for a, b in zip(start_loc, dir))
 
-        # if flag:
         if next_loc in temp:
             if dir in temp[next_loc]:
                 if flag:
@@ -68,19 +66,6 @@ def print_grid(grid):
         for j in range(len(grid[i])):
             print(grid[i][j], end ="")
         print("")
-
-# def process_cell(tasks):
-#     i, j, grid_perm, start_loc, hits = tasks
-#     if grid_perm[i][j] == '^' or not (i, j) in hits:
-#         return 0
-        
-#     temp = grid_perm[i][j]
-#     grid_perm[i][j] = '#'
-#     if traverse(grid_perm, start_loc, True) == -1:
-#         grid_perm[i][j] = temp
-#         return 1
-#     grid_perm[i][j] = temp
-#     return 0
 
 def process_cell(tasks):
     i, j, grid_perm, start_loc, hits ,temp = tasks
