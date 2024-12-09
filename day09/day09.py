@@ -23,42 +23,52 @@ def last_elem_count(nb, target_elem):
             continue
         else:
             break
-
+    print(f"j is {j} and len(nb) is {len(nb)}")
     n = 0
-    for i in range(len(nb) -j - 1, -1, -1):
+    for i in range(j, -1, -1):
         if nb[i] == target_elem:
             n += 1
         else:
             break
-    return n, nb[:-n]
+    # print(f"n is {n}")
+    return n, nb[:-n - (len(nb) - 1 - i - 1)]
 
 def dot_count(nb, k):
+    while (k < len(nb)):
+        if nb[k] != '.':
+            k += 1
+            continue
+        else:
+            break
     n = 0
     for i in range(k, len(nb)):
-        if nb[k] == nb[i]:
+        if nb[i] == nb[k]:
             n += 1
         else:
             break
-    return n
+    return n+k, n
 
 def part_two(nb):
-    
-    i = 1
+    i = 0
     target = nb[len(nb) - 1]
-    while(i < len(nb)):
-        if nb[i] != '.':
-            i += 1
-            continue
-        d = dot_count(nb, i)
+    test = 0
+    # while (target >= 0):
+    while(test < 2):
+        i, d = dot_count(nb, i) # index of the next first non-dot. and the dot count
         e, nb_temp = last_elem_count(nb, target)
-        while (d < e):
+        print(f"i and d: {i} and {d}. And e: {e}")
+
+        if (d < e):
             target -= 1
-            e, nb_temp = last_elem_count(nb, target)
+            continue
         for k in range(e):
-            nb[k] = target
-        print(e)
-        print(nb_temp)
+            nb_temp[i - d + k] = target
+        nb = nb_temp
+        target -= 1
         print(d)
+        print(e)
+        print(nb)
+        test += 1
 
 def main():
     import copy
