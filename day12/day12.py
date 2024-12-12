@@ -49,7 +49,6 @@ def get_part_two_perimeters(local_visited):
     max_second = max(second_elements)
     min_first = min(first_elements)
     min_second = min(second_elements)
-    # print(f"For {grid[loc[0]][loc[1]]}: row range: {min_first}-{max_first}, col range: {min_second}-{max_second}")
 
     corner_count = 0
     for row in range(min_first, max_first + 1, 1):
@@ -61,18 +60,19 @@ def get_part_two_perimeters(local_visited):
                 new_loc2 = tuple(map(sum, zip(loc, dirs[(i+1)%len(dirs)])))
                 new_dir = tuple(map(sum, zip(dirs[i],dirs[(i+1)%len(dirs)])))
                 new_loc_3 = tuple(map(sum, zip(loc, new_dir)))
-                locs = [new_loc1, new_loc2, new_loc_3]
+                locs3 = [new_loc1, new_loc2, new_loc_3]
+                locs2 = [new_loc1, new_loc2]
 
                 if loc in local_visited:
-                    if all(element not in local_visited for element in locs):
+                    if all(element not in local_visited for element in locs3):
                         corner_count += 1
                 else:
-                    if all(element in local_visited for element in locs):
+                    if all(element in local_visited for element in locs2):
                         corner_count += 1
     return corner_count
 
 def main():
-    file_path = "input2.txt"
+    file_path = "input.txt"
     with open(file_path, 'r') as file:
         grid = [list(line.strip()) for line in file]
         table = defaultdict(list)
@@ -89,19 +89,15 @@ def main():
                     visited.add(loc)
                     area, perimeter = traverse(grid, loc, visited, local_visited)
                     part_two_perimeters = get_part_two_perimeters(local_visited)
-                    print(f"part_two_perimeters: {part_two_perimeters}")
                     part_two_region_price += area * part_two_perimeters
                     local_visited = ()
                     combo = (area, perimeter)
                     table[grid[row][col]].append(combo)
-        # print(list(table.keys()))
-        # print(list(table.values()))
         total_price = 0
         for key in table:
             price = 0
             for i in range(len(table[key])):
                 price += table[key][i][0] * table[key][i][1]
-            # print(f"price of {key} is {price}")
             total_price += price
         print(f"Solution for Part 1: {total_price}")
         print(f"Solution for Part 2: {part_two_region_price}")
