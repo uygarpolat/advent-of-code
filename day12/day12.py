@@ -17,7 +17,7 @@ def print_grid(grid):
             print(grid[row][col], end="")
         print("")
 
-def traverse(grid, loc, table):
+def traverse(grid, loc, visited):
     dirs = [(1,0), (0,1), (-1,0), (0,-1)]
 
     area = 1
@@ -25,7 +25,7 @@ def traverse(grid, loc, table):
 
     for dir in dirs:
         new_loc = tuple(map(sum, zip(loc, dir)))
-        if new_loc in table[0]:
+        if new_loc in visited:
             if grid[loc[0]][loc[1]] != grid[new_loc[0]][new_loc[1]]:
                 perimeter += 1
             continue
@@ -35,8 +35,8 @@ def traverse(grid, loc, table):
         if grid[loc[0]][loc[1]] != grid[new_loc[0]][new_loc[1]]:
             perimeter += 1
         else:
-            table[0].append(new_loc)
-            local_area, local_perimeter = traverse(grid, new_loc, table)
+            visited.add(new_loc)
+            local_area, local_perimeter = traverse(grid, new_loc, visited)
             area += local_area
             perimeter += local_perimeter
     return area, perimeter
@@ -46,19 +46,17 @@ def main():
     with open(file_path, 'r') as file:
         grid = [list(line.strip()) for line in file]
         table = defaultdict(list)
+        visited = set()
         rows = len(grid)
         cols = len(grid[0])
         for row in range(rows):
             for col in range(cols):
                 loc = (row,col)
-                if not loc in table[0]:
-                    table[0].append(loc)
-                    area, perimeter = traverse(grid, loc, table)
+                if not loc in visited:
+                    visited.add(loc)
+                    area, perimeter = traverse(grid, loc, visited)
                     combo = (area, perimeter)
                     table[grid[row][col]].append(combo)
-        # print(len(grid) * len(grid[0]))
-        # print(len(table[0]))
-        del table[0]
         # print(list(table.keys()))
         # print(list(table.values()))
         total_price = 0
@@ -70,6 +68,5 @@ def main():
             total_price += price
         print(total_price)
                 
-
 if __name__ == "__main__":
     main()
