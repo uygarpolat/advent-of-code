@@ -6,13 +6,7 @@ def is_in_grid(grid, loc):
     cols = len(grid[0])
     return 0 <= loc[0] < rows and 0 <= loc[1] < cols
 
-def main():
-    file_path = "input.txt"
-    with open(file_path, 'r') as file:
-        grid = [list(line.strip()) for line in file]
-
-    dirs = [(1,0), (0,-1), (-1,0), (0,1)]
-
+def get_edges(grid):
     edges = defaultdict()
     rows = len(grid)
     cols = len(grid[0])
@@ -31,6 +25,17 @@ def main():
                 initial_dir = (0,-1)
                 initial_loc = (row,cols)
             edges[initial_loc] = initial_dir
+    return edges
+
+def main():
+    file_path = "input.txt"
+    with open(file_path, 'r') as file:
+        grid = [list(line.strip()) for line in file]
+
+    dirs = [(1,0), (0,-1), (-1,0), (0,1)]
+
+    edges = get_edges(grid)
+
     maximum = 0
     for key, value in edges.items():
         initial_loc = key
@@ -75,9 +80,9 @@ def main():
                 dir1 = (dir[1], dir[0])
                 dir2 = (-dir[1], -dir[0])
 
-                # Enqueue both directions
                 queue.append((new_loc, dir1))
                 queue.append((new_loc, dir2))
+
         if initial_dir == (0,1) and initial_loc == (0,-1):
             print(f"Solution for Part 1: {len(output)}")
         if maximum < len(output):
