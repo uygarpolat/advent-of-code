@@ -84,14 +84,14 @@ def main():
             final_state.append(robots[k].pos)
         if i == 99:
             part_one_solution = calculate_quadrant(final_state, x_len, y_len)
-            print(f"Solution for Part 1: {part_one_solution}")
         else:
             maximum_x = max(Counter(x[0] for x in final_state).values())
             maximum_y = max(Counter(y[1] for y in final_state).values())
             if maximum_x > x_len / 4 and maximum_y > y_len / 4:
+                print_grid(generate_grid(final_state, x_len, y_len))
+                print(f"Solution for Part 1: {part_one_solution}")
                 print(f"Solution for Part 2: {i+1}")
-                if i > 99:
-                    return
+                return
                 
 if __name__ == "__main__":
     main()
