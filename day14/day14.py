@@ -3,11 +3,29 @@ from collections import defaultdict
 from functools import reduce
 from operator import mul
 from collections import Counter
+from PIL import Image
+
+# Run with python3.10 day14.py
 
 @dataclass
 class Robot:
     pos: list[int]
     vel: tuple[int, int]
+
+def save_grid_as_image(grid, filename='output.png'):
+    rows = len(grid)
+    cols = len(grid[0])
+    img = Image.new('RGB', (cols, rows), color='black')
+    pixels = img.load()
+
+    for y in range(rows):
+        for x in range(cols):
+            if grid[y][x] == '.':
+                pixels[x,y] = (0,0,0)        # black
+            else:
+                pixels[x,y] = (0,255,0)      # green for tree
+
+    img.save(filename)
 
 def generate_grid(final_state, x_len, y_len):
     grid = []
@@ -88,6 +106,7 @@ def main():
             maximum_x = max(Counter(x[0] for x in final_state).values())
             maximum_y = max(Counter(y[1] for y in final_state).values())
             if maximum_x > x_len / 4 and maximum_y > y_len / 4:
+                save_grid_as_image(generate_grid(final_state, x_len, y_len), 'aoc_day14_part2.png')
                 print_grid(generate_grid(final_state, x_len, y_len))
                 print(f"Solution for Part 1: {part_one_solution}")
                 print(f"Solution for Part 2: {i+1}")
