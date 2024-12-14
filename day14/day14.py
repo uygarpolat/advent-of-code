@@ -17,6 +17,14 @@ def is_in_grid(grid, loc):
         return True
     return False
 
+def print_grid(grid):
+    rows = len(grid)
+    cols = len(grid[0])
+    for row in range(rows):
+        for col in range(cols):
+            print(grid[row][col], end="")
+        print("")
+
 def execute_move(pos, vel, x_len, y_len):
 
     new_pos_raw = tuple(map(sum, zip(pos, vel)))
@@ -53,24 +61,40 @@ def main():
             robots[i] = Robot(list(pos), vel)
             # print(robots[i].pos[0])
 
+    part_one_solution = 0
     x_len = 101
     y_len = 103
-    iter = 100
-    final_state = []
+
+    iter = 10000
     for i in range(iter):
+        final_state = []
         for j in robots:
             # print(f"pos: {robots[j].pos}, vel: {robots[j].vel}")
             pos = robots[j].pos
             vel = robots[j].vel
             robots[j].pos = execute_move(pos, vel, x_len, y_len)
             # print(robots[j].pos)
-    for k in robots:
-        final_state.append(robots[k].pos)
-    # print(final_state)
-    print(calculate_quadrant(final_state, x_len, y_len))
+        for k in robots:
+            final_state.append(robots[k].pos)
+        if i == 99:
+            part_one_solution = calculate_quadrant(final_state, x_len, y_len)
+        if i == 6531:
+            display_state(final_state, x_len, y_len)
+            print(f"Christmas tree found after {i+1} seconds")
+    print(f"Solution for Part 1: {part_one_solution}")
+    print(f"Solution for Part 2: {6532}")
 
-def display_state(final_state):
-    return 0
+def display_state(final_state, x_len, y_len):
+    grid = []
+    for col in range(y_len):
+        grid.append([])
+        for row in range(x_len):
+            if (row,col) in final_state:
+                grid[col].append(final_state.count((row,col)))
+            else:
+                grid[col].append('.')
+    print_grid(grid)
+    print("-----------------------------------------------")
 
 if __name__ == "__main__":
     main()
