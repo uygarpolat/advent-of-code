@@ -92,6 +92,6 @@ def main():
                 print(f"Solution for Part 2: {i+1}")
                 if i > 99:
                     return
-
+                
 if __name__ == "__main__":
     main()
