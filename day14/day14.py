@@ -3,7 +3,7 @@ from collections import defaultdict
 from functools import reduce
 from operator import mul
 from collections import Counter
-from PIL import Image
+from PIL import Image # type: ignore
 
 # Run with python3.10 day14.py
 
@@ -21,9 +21,9 @@ def save_grid_as_image(grid, filename='output.png'):
     for y in range(rows):
         for x in range(cols):
             if grid[y][x] == '.':
-                pixels[x,y] = (0,0,0)        # black
+                pixels[x,y] = (0,0,0)
             else:
-                pixels[x,y] = (0,255,0)      # green for tree
+                pixels[x,y] = (0,255,0)
 
     img.save(filename)
 
