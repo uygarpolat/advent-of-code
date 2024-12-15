@@ -53,22 +53,13 @@ def calculate_sum(grid):
                 total_score += (row + 1) * 100 + (col + 1)
     return total_score
 
-
 def main():
     file_path = "input.txt"
     grid, moves, loc_robot = parse_file(file_path)
-    # print(moves)
-    # print(loc_robot)
-    # print_grid(grid)
 
     for dir in moves:
-        # print("---------")
-        # print(loc_robot, dir)
-        old_loc = loc_robot
-        loc_robot = move_the_robot(grid, old_loc, dir)
-        # print_grid(grid)
-        # print(loc_robot)
-    
+        loc_robot = move_the_robot(grid, loc_robot, dir)
+
     sum_of_boxes = calculate_sum(grid)
     print(f"Solution for Part 1: {sum_of_boxes}")
 
@@ -84,7 +75,7 @@ def move_the_robot(grid, old_loc, dir):
         grid[new_loc[0]][new_loc[1]] = value_old
         grid[old_loc[0]][old_loc[1]] = '.'
         return new_loc
-    elif value_new == 'O':
+    else: # elif value_new == 'O':
         returnable = move_the_robot(grid, new_loc, dir)
         if returnable == new_loc:
             return old_loc
