@@ -63,13 +63,24 @@ def traverse(grid, loc_cur, loc_end, old_dir, logbook, best_set):
             continue
 
         if value_loc_new == value_loc_end:
+        # print(f"Found E with value of {logbook[loc_new]}", end="")
             if logbook[loc_new] > boost + 1 + loc_cur_logbook_value:
+
+                # print(f", updated it because the new value was {boost + 1 + loc_cur_logbook_value}")
+                # print(f"Also cleared the set, which was:")
+                # print_set(grid, best_set)
+                best_set.clear()
                 best_set.add(loc_new)
                 logbook[loc_new] = boost + 1 + loc_cur_logbook_value
                 return True
+            elif logbook[loc_new] == boost + 1 + loc_cur_logbook_value:
+                # print(f", didn't update it because the new value was also {boost + 1 + loc_cur_logbook_value}")
+                best_set.add(loc_new)
+                return True
+            # print(f", didn't update it because the new value was higher: {boost + 1 + loc_cur_logbook_value}")
             return False
         else:
-            if logbook[loc_new] > boost + 1 + loc_cur_logbook_value:
+            if logbook[loc_new] >= boost + 1 + loc_cur_logbook_value:
                 logbook[loc_new] = boost + 1 + loc_cur_logbook_value
                 if traverse(grid, loc_new, loc_end, new_dir, logbook, best_set):
                     best_set.add(loc_new)
@@ -90,7 +101,7 @@ def main():
 
     traverse(grid, loc_cur, loc_end, (0,1), logbook, best_set)
     print(f"Solution for Part 1: {logbook[loc_end]}")
-    # print(best_set)
+    print(len(best_set))
     # print_set(grid, best_set)
 
 if __name__ == "__main__":
