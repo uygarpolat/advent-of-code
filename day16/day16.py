@@ -23,9 +23,9 @@ def traverse(grid, loc_cur, loc_end, old_dir):
     value_loc_end = grid[loc_end[0]][loc_end[1]]
 
     if value_loc_cur == '#':
-        return 0, False
-    elif value_loc_cur == value_loc_end:
-        return 1, True
+        return False
+    # elif value_loc_cur == value_loc_end:
+    #     return 1, True
     
     for new_dir in dirs:
         boost = 1
@@ -39,8 +39,8 @@ def traverse(grid, loc_cur, loc_end, old_dir):
 
         if value_loc_new == '#':
             continue
-        elif value_loc_cur == value_loc_end:
-            return True
+        elif value_loc_new == value_loc_end:
+            return loc_new
         else:
             bool_val = traverse(grid, loc_new, loc_end, new_dir)
     return bool_val
