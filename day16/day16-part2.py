@@ -39,15 +39,14 @@ def print_grid(grid, flag=1):
             print("")
     return loc_start, loc_end
 
-def traverse(grid, loc_cur, loc_end, old_dir, logbook, best_set):
+def traverse(grid, loc_cur, loc_end, old_dir, logbook, best_set, dirs):
 
     bool_val = 0
-    dirs = [(1,0),(0,1),(-1,0),(0,-1)]
 
     value_loc_end = grid[loc_end[0]][loc_end[1]]
     loc_cur_logbook_value = logbook[loc_cur]
     
-    for new_dir in dirs:
+    for i, new_dir in enumerate(dirs):
         boost = 0
         if new_dir[0] + old_dir[0] == 0 and new_dir[1] + old_dir[1] == 0:
             continue
@@ -63,46 +62,53 @@ def traverse(grid, loc_cur, loc_end, old_dir, logbook, best_set):
             continue
 
         if value_loc_new == value_loc_end:
-        # print(f"Found E with value of {logbook[loc_new]}", end="")
             if logbook[loc_new] > boost + 1 + loc_cur_logbook_value:
-
-                # print(f", updated it because the new value was {boost + 1 + loc_cur_logbook_value}")
-                # print(f"Also cleared the set, which was:")
-                # print_set(grid, best_set)
                 best_set.clear()
                 best_set.add(loc_new)
                 logbook[loc_new] = boost + 1 + loc_cur_logbook_value
                 return True
             elif logbook[loc_new] == boost + 1 + loc_cur_logbook_value:
-                # print(f", didn't update it because the new value was also {boost + 1 + loc_cur_logbook_value}")
                 best_set.add(loc_new)
                 return True
-            # print(f", didn't update it because the new value was higher: {boost + 1 + loc_cur_logbook_value}")
             return False
         else:
             if logbook[loc_new] >= boost + 1 + loc_cur_logbook_value:
                 logbook[loc_new] = boost + 1 + loc_cur_logbook_value
-                if traverse(grid, loc_new, loc_end, new_dir, logbook, best_set):
+                if traverse(grid, loc_new, loc_end, new_dir, logbook, best_set, dirs):
                     best_set.add(loc_new)
                     bool_val = True
     return bool_val
 
-def main():
-    file_path = "input.txt"
+def initialize_grid(file_path):
     with open(file_path, 'r') as file:
         grid = [list(line.strip()) for line in file]
     loc_cur, loc_end = print_grid(grid, 0)
-    print(loc_cur, loc_end)
 
     logbook = defaultdict(lambda: 1000000000)
     logbook[loc_cur] = 0
     best_set = set()
     best_set.add(loc_cur)
 
-    traverse(grid, loc_cur, loc_end, (0,1), logbook, best_set)
-    print(f"Solution for Part 1: {logbook[loc_end]}")
-    print(len(best_set))
-    # print_set(grid, best_set)
+    return grid, loc_cur, loc_end, logbook, best_set
+
+def main():
+    file_path = "input.txt"
+
+    from itertools import permutations
+
+    dirs = [(1,0),(0,1),(-1,0),(0,-1)]
+    all_combinations = list(permutations(dirs))
+    result = [list(comb) for comb in all_combinations]
+
+    merged_set = set()
+
+    for i, comb in enumerate(result):
+        print(f"Running comb {i+1} of {len(result)}")
+        grid, loc_cur, loc_end, logbook, best_set = initialize_grid(file_path)
+        traverse(grid, loc_cur, loc_end, (0,1), logbook, best_set, comb)
+        merged_set = merged_set.union(best_set)
+
+    print(f"Solution for Part 2: {len(merged_set)}")
 
 if __name__ == "__main__":
     main()
