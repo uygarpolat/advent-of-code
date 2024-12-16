@@ -4,6 +4,24 @@ import sys
 
 sys.setrecursionlimit(10000)
 
+def print_set(grid, set):
+    rows = len(grid)
+    cols = len(grid[0])
+    for row in range(rows):
+        for col in range(cols):
+            temp = grid[row][col]
+            if (row,col) in set:
+                print("O", end="")
+            elif temp == 'S':
+                print("S", end="")
+            elif temp == 'E':
+                print("E", end="")
+            elif temp == '#':
+                print("#", end="")
+
+            else:
+                print(".", end="")
+        print("")
 
 def print_grid(grid, flag=1):
     rows = len(grid)
@@ -21,10 +39,9 @@ def print_grid(grid, flag=1):
             print("")
     return loc_start, loc_end
 
-
-
-
 def traverse(grid, loc_cur, loc_end, old_dir, logbook, best_set):
+
+    bool_val = 0
     dirs = [(1,0),(0,1),(-1,0),(0,-1)]
 
     value_loc_end = grid[loc_end[0]][loc_end[1]]
@@ -49,12 +66,15 @@ def traverse(grid, loc_cur, loc_end, old_dir, logbook, best_set):
             if logbook[loc_new] > boost + 1 + loc_cur_logbook_value:
                 best_set.add(loc_new)
                 logbook[loc_new] = boost + 1 + loc_cur_logbook_value
-            return
+                return True
+            return False
         else:
             if logbook[loc_new] > boost + 1 + loc_cur_logbook_value:
                 logbook[loc_new] = boost + 1 + loc_cur_logbook_value
-                traverse(grid, loc_new, loc_end, new_dir, logbook, best_set)
-    return
+                if traverse(grid, loc_new, loc_end, new_dir, logbook, best_set):
+                    best_set.add(loc_new)
+                    bool_val = True
+    return bool_val
 
 def main():
     file_path = "input.txt"
@@ -70,7 +90,8 @@ def main():
 
     traverse(grid, loc_cur, loc_end, (0,1), logbook, best_set)
     print(f"Solution for Part 1: {logbook[loc_end]}")
-    print(len(best_set))
+    # print(best_set)
+    # print_set(grid, best_set)
 
 if __name__ == "__main__":
     main()
