@@ -87,17 +87,16 @@ def make_the_move(grid, old_loc, dir):
     
     if value_new_loc == '.':
         grid[old_loc[0]][old_loc[1]], grid[new_loc[0]][new_loc[1]] = grid[new_loc[0]][new_loc[1]], grid[old_loc[0]][old_loc[1]]
-    elif dir == (0,1) or dir == (0,-1):
+        return new_loc
+    if dir == (0,1) or dir == (0,-1):
         make_the_move(grid, new_loc, dir)
-        grid[old_loc[0]][old_loc[1]], grid[new_loc[0]][new_loc[1]] = grid[new_loc[0]][new_loc[1]], grid[old_loc[0]][old_loc[1]]
     elif value_new_loc == '[':
         make_the_move(grid, new_loc, dir)
         make_the_move(grid, (new_loc[0], new_loc[1] + 1), dir)
-        grid[old_loc[0]][old_loc[1]], grid[new_loc[0]][new_loc[1]] = grid[new_loc[0]][new_loc[1]], grid[old_loc[0]][old_loc[1]]
     elif value_new_loc == ']':
         make_the_move(grid, new_loc, dir)
         make_the_move(grid, (new_loc[0], new_loc[1] - 1), dir)
-        grid[old_loc[0]][old_loc[1]], grid[new_loc[0]][new_loc[1]] = grid[new_loc[0]][new_loc[1]], grid[old_loc[0]][old_loc[1]]
+    grid[old_loc[0]][old_loc[1]], grid[new_loc[0]][new_loc[1]] = grid[new_loc[0]][new_loc[1]], grid[old_loc[0]][old_loc[1]]
     return new_loc
 
 def is_move_possible(grid, old_loc, dir):
