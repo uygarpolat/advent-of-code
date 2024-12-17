@@ -3,7 +3,8 @@ def main():
     progs_string = ',' + ",".join(map(str, progs))
     len_progs_string = len(progs_string.lstrip(','))
     func = [ins0, ins1, ins2, ins3, ins4, ins5, ins6, ins7]
-    a_init = 37293246
+    a_init_start = 37293246
+    a_init = a_init_start
 
     while True:
         prog = 0
@@ -14,14 +15,13 @@ def main():
             opcode = progs[prog]
             operant = progs[prog+1]
 
-            res = func[opcode](regs, operant, solution_parts)
-            if res:
+            if func[opcode](regs, operant, solution_parts):
                 prog = operant - 2
             prog += 2
 
         solution = ",".join(solution_parts)
 
-        if a_init == 37293246:
+        if a_init == a_init_start:
             print(f"Solution for Part 1: {solution}")
             print("Calculating solution for Part 2, this may take a couple of minutes...")
             a_init = 1
