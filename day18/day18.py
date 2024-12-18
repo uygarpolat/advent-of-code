@@ -43,7 +43,7 @@ def main():
         if i == 1024:
             print(f"Solution for Part 1: {local_solution}")
         if local_solution == defaultdict_value:
-            print(f"Solution for Part 2: {",".join(map(str, first_n_coordinates[-1]))}")
+            print(f"Solution for Part 2: {','.join(map(str, first_n_coordinates[-1]))}")
             return    
 
 if __name__ == "__main__":
