@@ -29,24 +29,25 @@ def main():
     
     dirs = [(1,0),(0,1),(-1,0),(0,-1)]
     grid_size = 71
-    first_n = 1024
-    first_n_coordinates = coordinates[:first_n]
-    # print_grid(grid_size, first_n_coordinates)
-    logbook = defaultdict(lambda: 1000000)
-    pq = PriorityQueue()
-    logbook[(0,0)] = 0
-    pq.put((logbook[(0,0)], (0,0)))
+    for i in range(1, len(coordinates), 1):
+        # Fix logic
+        first_n = i
+        first_n_coordinates = coordinates[:first_n]
+        logbook = defaultdict(lambda: 1000000)
+        pq = PriorityQueue()
+        logbook[(0,0)] = 0
+        pq.put((logbook[(0,0)], (0,0)))
 
-    while not pq.empty():
-        priority, old_loc = pq.get()
-        for dir in dirs:
-            new_loc = tuple(map(sum, zip(old_loc, dir)))
-            if not is_in_grid(grid_size, new_loc) or new_loc in first_n_coordinates:
-                continue
-            if logbook[new_loc] > priority + 1:
-                logbook[new_loc] = priority + 1
-                pq.put((logbook[new_loc], new_loc))
-    print(logbook[(grid_size - 1, grid_size - 1)])
+        while not pq.empty():
+            priority, old_loc = pq.get()
+            for dir in dirs:
+                new_loc = tuple(map(sum, zip(old_loc, dir)))
+                if not is_in_grid(grid_size, new_loc) or new_loc in first_n_coordinates:
+                    continue
+                if logbook[new_loc] > priority + 1:
+                    logbook[new_loc] = priority + 1
+                    pq.put((logbook[new_loc], new_loc))
+        print(logbook[(grid_size - 1, grid_size - 1)])
 
     
 
