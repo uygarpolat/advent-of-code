@@ -1,7 +1,7 @@
 import operator
 
 def main():
-    file_path = "input2.txt"
+    file_path = "input.txt"
     second_part = False
     workflows = {}
     parts = {}
@@ -19,30 +19,36 @@ def main():
                 next_key = len(parts)
                 for rating in ratings:
                     parts.setdefault(next_key, []).append(int(rating.strip('xmas=')))
-    print(workflows)
-    print(parts)
 
-    result = execute_workflow(workflows['px'][1], parts[0])
-    print(result)
+    counter = 0
+    for part in parts.values():
+        specific = "in"
+        result = 'X'
+        while result != 'A' and result != 'R':
+            i = 0
+            while i < len(workflows[specific]):
+                result = execute_workflow(workflows[specific][i], part)
+                if result == 'A' or result == 'R':
+                    break
+                elif result == 0:
+                    i += 1
+                else:
+                    i = 0
+                    specific = result
+        if result == 'A':
+            counter += sum(part)
+    print(counter)
 
 def execute_workflow(workflow, part):
-    print(f"workflow is {workflow} and part is {part}")
-    if workflow == 'A':
-        return 2
-    elif workflow == 'R':
-        return -1
-    elif ':' not in workflow:
-        return workflow
-    else:
+    if ':' in workflow:
         comparison, target = workflow.split(':')
-        result = evaluate_comparison(comparison, part)
-        if result:
+        if evaluate_comparison(comparison, part):
             return target
         else:
             return 0
+    return workflow
 
 def evaluate_comparison(comparison, part):
-    # 'a<2006'    and     [2127, 1623, 2188, 1013]
     operators = {
     '>': operator.gt,
     '<': operator.lt,
@@ -52,9 +58,7 @@ def evaluate_comparison(comparison, part):
     op_func = operators.get(comparison[1])
     source_to_compare, num = comparison.split(comparison[1])
     target_to_compare = xmas.index(source_to_compare)
-    print(f"operator is {op_func}, first part is {part[target_to_compare]}, second part is {int(num)}")
     return op_func(part[target_to_compare], int(num))
-
 
 if __name__ == "__main__":
     main()
