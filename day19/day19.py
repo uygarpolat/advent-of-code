@@ -1,5 +1,3 @@
-import re
-
 def main():
     file_path = "input.txt"
 
@@ -23,12 +21,6 @@ def slice_and_solve(design, patterns, longest_element):
             if slice_and_solve(design[i+1:], patterns, longest_element):
                 return True
     return False
-
-
-
-
-            
-
 
 if __name__ == "__main__":
     main()
