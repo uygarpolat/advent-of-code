@@ -7,20 +7,31 @@ def main():
         designs = designs.split('\n')
 
     longest_element = max(patterns, key=len)
-    res = 0
-    for i, design in enumerate(designs):
-        if slice_and_solve(design, patterns, longest_element):
-            res += 1
-    print(f"Solution for Part 1: {res}")
+    result_1 = 0
+    result_2 = 0
 
-def slice_and_solve(design, patterns, longest_element):
+    for design in designs:
+        memo = {}
+        res = slice_and_solve(design, patterns, longest_element, memo)
+        if res:
+            result_1 += 1
+            result_2 += res
+    print(f"Solution for Part 1: {result_1}")
+    print(f"Solution for Part 2: {result_2}")
+
+def slice_and_solve(design, patterns, longest_element, memo):
+    if design in memo:
+        return memo[design]
     if design == "":
-        return True
-    for i in range(0, len(longest_element), 1):
-        if design[:i+1] in patterns:
-            if slice_and_solve(design[i+1:], patterns, longest_element):
-                return True
-    return False
+        return 1
+
+    value = 0
+    for i in range(1, min(len(longest_element), len(design)) + 1):
+        if design[:i] in patterns:
+            value += slice_and_solve(design[i:], patterns, longest_element, memo)
+
+    memo[design] = value
+    return value
 
 if __name__ == "__main__":
     main()
