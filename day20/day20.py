@@ -51,37 +51,52 @@ def main():
             if logbook[(loc_end[0], loc_end[1])] != defaultdict_value:
                 break
 
-    cheat_sheet = defaultdict(lambda: 0)
+    cheat_sheet_1 = defaultdict(lambda: 0)
+    cheat_sheet_2 = defaultdict(lambda: 0)
 
     for key in logbook:
-        cheat_ps_1 = calculate_best_cheat_1(grid, logbook, key, dirs)
+        cheat_ps_1 = calculate_best_cheat_1(grid, logbook, key, dirs, 2)
+        cheat_ps_2 = calculate_best_cheat_1(grid, logbook, key, dirs, 20)
         # if key == (7,9):
         #     print(f"Cheat amount for {key} is {cheat_ps}")
         for ps in cheat_ps_1:
-            cheat_sheet[ps] += 1
+            cheat_sheet_1[ps] += 1
+        for ps in cheat_ps_2:
+            cheat_sheet_2[ps] += 1
 
-    # for key in cheat_sheet:
-    #     print(f"cheat_sheet[{key}]: {cheat_sheet[key]}")
+
     tally = 0
-    for key, value in cheat_sheet.items():
+    for key, value in cheat_sheet_1.items():
         if key == 0:
             continue
         if key >= 100:
             tally += value
     print(f"Solution for Part 1: {tally}")
+
+    tally = 0
+    for key, value in cheat_sheet_2.items():
+        if key == 0:
+            continue
+        if key >= 100:
+            tally += value
+    print(f"Solution for Part 2: {tally}")
     
-def calculate_best_cheat_1(grid, logbook, key, dirs):
+def calculate_best_cheat_1(grid, logbook, key, dirs, move_count):
     delta = [0]
     target = logbook[key]
+    new_loc = key
 
+    
     for dir in dirs:
-        new_loc_1 = tuple(map(sum, zip(key, dir)))
-        new_loc_2 = tuple(map(sum, zip(new_loc_1, dir)))
-        if not is_in_grid(grid, new_loc_2) or grid[new_loc_2[0]][new_loc_2[1]] == '#':
+        new_loc = key
+        for _ in range(move_count):
+            new_loc = tuple(map(sum, zip(new_loc, dir)))
+
+        if not is_in_grid(grid, new_loc) or grid[new_loc[0]][new_loc[1]] == '#':
             continue
 
-        if target < logbook[new_loc_2]:
-            delta.append(logbook[new_loc_2] - target - 2)
+        if target < logbook[new_loc]:
+            delta.append(logbook[new_loc] - target - 2)
             # if key == (7,9):
             #     print(f"old time for {key} was {logbook[key]} and new suggested time is {logbook[new_loc_2] - target - 2}")
 
