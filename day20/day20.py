@@ -26,6 +26,39 @@ def print_grid(grid, flag=1):
             print("")
     return loc_start, loc_end
 
+def simplify_tuple_set(input_set):
+    max_dict = {}
+    
+    for left, right in input_set:
+        if left not in max_dict or right > max_dict[left]:
+            max_dict[left] = right
+
+    simplified_set = {((a, b), c) for (a, b), c in max_dict.items()}
+    return simplified_set
+
+def calculate_best_cheat(setting, target, grid, logbook, key, dirs, move_count, current_move_count, visited):
+    if current_move_count > move_count:
+        return
+    
+    state = (key, current_move_count)
+    if state in visited:
+        return
+    visited.add(state)
+    
+    for dir in dirs:
+        new_loc = tuple(map(sum, zip(key, dir)))
+
+        if not is_in_grid(grid, new_loc):
+            continue
+
+        if grid[new_loc[0]][new_loc[1]] != '#':
+            saving = logbook[new_loc] - target - current_move_count
+            if saving > 0 and target < logbook[new_loc]:
+                setting.add((new_loc, saving))
+
+        calculate_best_cheat(setting, target, grid, logbook, new_loc, dirs, move_count, current_move_count + 1, visited)
+    return
+
 def main():
     file_path = "input.txt"
     with open(file_path, 'r') as file:
@@ -51,59 +84,15 @@ def main():
             if logbook[(loc_end[0], loc_end[1])] != defaultdict_value:
                 break
 
-    cheat_sheet_1 = defaultdict(lambda: 0)
-    cheat_sheet_2 = defaultdict(lambda: 0)
-
-    for key in logbook:
-        cheat_ps_1 = calculate_best_cheat_1(grid, logbook, key, dirs, 2)
-        cheat_ps_2 = calculate_best_cheat_1(grid, logbook, key, dirs, 20)
-        # if key == (7,9):
-        #     print(f"Cheat amount for {key} is {cheat_ps}")
-        for ps in cheat_ps_1:
-            cheat_sheet_1[ps] += 1
-        for ps in cheat_ps_2:
-            cheat_sheet_2[ps] += 1
-
-
-    tally = 0
-    for key, value in cheat_sheet_1.items():
-        if key == 0:
-            continue
-        if key >= 100:
-            tally += value
-    print(f"Solution for Part 1: {tally}")
-
-    tally = 0
-    for key, value in cheat_sheet_2.items():
-        if key == 0:
-            continue
-        if key >= 100:
-            tally += value
-    print(f"Solution for Part 2: {tally}")
-    
-def calculate_best_cheat_1(grid, logbook, key, dirs, move_count):
-    delta = [0]
-    target = logbook[key]
-    new_loc = key
-
-    
-    for dir in dirs:
-        new_loc = key
-        for _ in range(move_count):
-            new_loc = tuple(map(sum, zip(new_loc, dir)))
-
-        if not is_in_grid(grid, new_loc) or grid[new_loc[0]][new_loc[1]] == '#':
-            continue
-
-        if target < logbook[new_loc]:
-            delta.append(logbook[new_loc] - target - 2)
-            # if key == (7,9):
-            #     print(f"old time for {key} was {logbook[key]} and new suggested time is {logbook[new_loc_2] - target - 2}")
-
-    return delta
-
-
-
+    for i in range(2, 21, 18):
+        result = 0 
+        for key in list(logbook.keys()):
+            visited = set()
+            setting = set()
+            calculate_best_cheat(setting, logbook[key], grid, logbook, key, dirs, i, 1, visited)
+            simplified_set = simplify_tuple_set(setting)
+            result += sum(1 for _, right in simplified_set if right >= 100)
+        print(f"Solution for Part {i//20+1}: {result}")
 
 if __name__ == "__main__":
     main()
