@@ -14,9 +14,10 @@ def main():
             locks_values.append([row.count('#') - 1 for row in grid])
 
     count = 0
+    length = max(max(max(sublist) for sublist in keys_values), max(max(sublist) for sublist in locks_values))
     for key_values in keys_values:
         for lock_values in locks_values:
-            if all(total < 6 for total in map(sum, zip(key_values, lock_values))):
+            if all(total <= length for total in map(sum, zip(key_values, lock_values))):
                 count += 1
     print(f"Solution for Part 1: {count}")
 
