@@ -17,8 +17,15 @@ def main():
                 system[target] = []
             system[target].append(-1)
             system[target].append([source1, logical, source2])
-    # for key, value in system.items():
-    #     print(f"system[{key}] = {value}")
+
+    # swap_wires(system, 'z34', 'wrc')
+    # swap_wires(system, 'nnf', 'z09')
+    # swap_wires(system, 'z20', 'nhs')
+    # swap_wires(system, 'ddn', 'kqh')
+
+    num_x = get_decimal(system, 'x')
+    num_y = get_decimal(system, 'y')
+    ultimate_target = num_x + num_y
 
     pq = PriorityQueue()
     populate_queue(system, pq)
@@ -28,13 +35,49 @@ def main():
         logical_operation(system, target)
         populate_queue(system, pq)
     
-    print(f"Solution for Part 1: {get_decimal(system)}")
+    result = get_decimal(system, 'z')
+    print(f"Solution for Part 1: {result}")
 
-def get_decimal(system):
+    ultimate_target_binary = bin(ultimate_target)[2:]
+    result_binary = bin(result)[2:]
+
+    wrong_z_list = []
+    affected = set()
+    unaffected = set()
+    for i in range(len(ultimate_target_binary) - 1, -1 , -1):
+        if len(ultimate_target_binary) - i - 1 < 10:
+            word = 'z0'
+        else:
+            word = 'z'
+        final_product = word + str(len(ultimate_target_binary) - i - 1)
+
+        if ultimate_target_binary[i] != result_binary[i]:
+            wrong_z_list.append(final_product)
+            chopped_list = system[final_product][1][:1] + system[final_product][1][2:] 
+            for val in chopped_list:
+                if val.startswith('x') or val.startswith('y'):
+                    continue
+                affected.add(val)
+        else:
+            chopped_list = system[final_product][1][:1] + system[final_product][1][2:]
+            for val in chopped_list:
+                if val.startswith('x') or val.startswith('y'):
+                    continue
+                unaffected.add(val)
+    # print(f"Discrepany count and culprits: {len(wrong_z_list)}: {wrong_z_list}")
+    # print(affected)
+    # print(len(affected))
+
+def swap_wires(system, wire1, wire2):
+    temp = system[wire1]
+    system[wire1] = system[wire2]
+    system[wire2] = temp
+
+def get_decimal(system, keyword):
     system = dict(sorted(system.items(), reverse=True))
     binary_string = ""
     for key, value in system.items():
-        if key.startswith('z'):
+        if key.startswith(keyword):
             binary_string += str(value[0])
     return int(binary_string, 2)
 
