@@ -58,7 +58,6 @@ def main():
                     if state_new[3] != '' and state_new[3] != c:
                         continue
 
-                    # print(state_new)
                     if state_new[0] > 0:
                         if state_new[3] == c:
                             final_typed += state_new[2]
@@ -71,7 +70,7 @@ def main():
                     if not is_in_visited(state_new, visited):
                         pq.put(state_new)
         midsum = len(final_typed) * num
-        print(f"midsum for {sequence} is {midsum}")
+        # print(f"midsum for {sequence} is {midsum}")
         total += midsum
     print(f"Solution for Part 1: {total}")
                     
@@ -144,26 +143,11 @@ def find_character_location(pad, char):
                 return (row_idx, col_idx)
 
 def make_key(state):
-    """
-    state is [cost, pointers, gibberish, typed].
-    We'll ignore cost and gibberish in the visited check 
-    and just use pointers and typed.
-    """
     cost, pointers, gibberish, typed = state
-    # pointers is a list of (row,col). Make it a tuple of tuples so it's hashable.
     pointers_tuple = tuple(pointers)
     return (pointers_tuple, typed)
 
 def is_in_visited(state, visited):
-    """
-    Return True if we've been in the same pointer+typed situation 
-    at an equal or lower cost already.
-
-    'visited' could map the key -> the best (lowest) cost we've seen.
-
-    If cost >= visited[key], return True (skip it).
-    Otherwise, False.
-    """
     cost, pointers, gibberish, typed = state
     key = make_key(state)
 
@@ -174,10 +158,6 @@ def is_in_visited(state, visited):
     return False
 
 def mark_visited(state, visited):
-    """
-    Record in visited that we've found a cheaper way 
-    (or the only way so far) to get 'key'.
-    """
     cost, pointers, gibberish, typed = state
     key = make_key(state)
     visited[key] = cost

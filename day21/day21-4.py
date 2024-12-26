@@ -1,7 +1,6 @@
-
-
 from queue import PriorityQueue
 import copy
+from collections import defaultdict
 
 def is_in_grid(grid, loc):
     rows = len(grid)
@@ -18,82 +17,93 @@ def is_in_grid(grid, loc):
 def main():
     file_path = "input.txt"
     with open(file_path, 'r') as file:
-        sequences = [line.strip() for line in file]
+        finality = [line.strip() for line in file]
 
-    sequences = ["<A^A>^^AvvvA"]
-    sequences2 = [[char] for char in sequences[0]]
-    print(sequences2)
-    in_between = 0
+    finality = [[char] for char in finality[0]]
 
     moves = ['<', '>', 'v', '^', 'A']
     numpad_pointer = (3,2)
     keypad_pointer = (0,2)
-    # pointers = [keypad_pointer for _ in range(in_between)] + [numpad_pointer]
     pointers = [keypad_pointer]
 
-    tabulation = []
+    for mmm in range(25):
 
-    total = 0
-    for sequence in sequences2:
-         
-         for member in sequence:
+        if mmm == 0:
+            pointers = [numpad_pointer]
+        else:
+            pointers = [keypad_pointer]
+
+        sequences2 = finality
+
+        finality = []
+
+        for sequence in sequences2:
+
+            info_of_alternatives = defaultdict(lambda: 0)
             
-            final_typed = ""
-            # num = int(sequence[:-1])
-            num = 0
+            for i, member in enumerate(sequence):
 
-            
+                tabulation = []
 
-            for c in member:
-                typed = ""
-                gibberish = ""
-                move = ""
-                cost = 0
-                state = [cost, pointers, gibberish, typed]
+                for c in member:
 
-                pq = PriorityQueue()
-                pq.put(state)
-                # print(list(pq.queue))
+                    typed = ""
+                    gibberish = ""
+                    move = ""
+                    cost = 0
+                    state = [cost, pointers, gibberish, typed]
+                    pq = PriorityQueue()
+                    pq.put(state)
+                    sub_tabulation = []
+                    big_cost = 1000000000000
+                    while not pq.empty():
 
-                visited = {}
-                sub_tabulation = []
-                big_cost = 1000000000000
+                        state = pq.get()
 
-                a_watcher = 0
+                        for move in moves:
+                            state_new = press_key_two_keypads(state, move, mmm, 0)
+                            if state_new == None:
+                                continue
+                            if state_new[3] != '' and state_new[3] != c:
+                                continue
+                            if state_new[3] == c:
+                                if big_cost == 1000000000000:
+                                    pointers = state_new[1]
+                                if state_new[0] <= big_cost:
+                                    pointers = state_new[1]
+                                    big_cost = state_new[0]
+                                    sub_tabulation.append(state_new[2])
+                                else:
+                                    while not pq.empty():
+                                        pq.get()
+                                    break
+                            pq.put(state_new)
 
-                while not pq.empty():
+                    tabulation.append(sub_tabulation)
 
-                    state = pq.get()
-                    for move in moves:
-                        state_new = press_key_two_keypads(state, move, in_between, 0)
-                        if state_new == None:
-                            continue
-                        if state_new[3] != '' and state_new[3] != c:
-                            continue
-                        if state_new[3] == c:
-                            # final_typed += state_new[2]
-                            if big_cost == 1000000000000:
-                                pointers = state_new[1]
-                            if state_new[0] <= big_cost:
-                                pointers = state_new[1]
-                                big_cost = state_new[0]
-                                # print(state_new[2])
-                                sub_tabulation.append(state_new[2])
-                            else:
-                                while not pq.empty():
-                                    pq.get()
-                                break
-                        pq.put(state_new)
+                info_of_alternatives[i] = tabulation
+            int_check = 10000000000
+            indexx = 0
+            for key, value in info_of_alternatives.items():
+                count = 0
+                for val in value:
+                    # for cal in val:
+                    count += len(val[0])
+                if int_check > count:
+                    int_check = count
+                    indexx = key
+            finality.extend(info_of_alternatives[indexx])
+        count = 0
+        for dal in finality:
+            count += len(dal[0])
 
-                tabulation.append(sub_tabulation)
-    print(tabulation)
+def press_key_two_keypads(state, move, mmm, level):
 
-
-def press_key_two_keypads(state, move, in_between, level):
-
-    # numpad = ['789', '456', '123', 'x0A']
-    keypad = ['x^A', '<v>']
-    ultimate_pads = [keypad]
+    if mmm == 0:
+        pad = ['789', '456', '123', 'x0A']
+    else:
+        pad = ['x^A', '<v>']
+    ultimate_pads = [pad]
 
     pads = ultimate_pads[level:]
     cost = state[0]
