@@ -1,9 +1,9 @@
-class Keypad:
-    pad = ['x^A', '<v>']
+from queue import PriorityQueue
+import copy
 
 def is_in_grid(grid, loc):
     rows = len(grid)
-    cols = len(grid[0])
+    cols = 3
 
     if rows == 4 and loc == (3,0):
         return 0
@@ -13,135 +13,174 @@ def is_in_grid(grid, loc):
         return 1
     return 0
 
-
 def main():
     file_path = "input.txt"
     with open(file_path, 'r') as file:
         sequences = [line.strip() for line in file]
-    # print(sequences)
-    numpad = ['789', '456', '123', 'X0A']
-    keypad1 = Keypad()
-    keypad2 = Keypad()
-    keypad3 = Keypad()
-    result = 0
 
-    sequences = ["029A"]
+    # pq = PriorityQueue()
 
+    total = 0
     for sequence in sequences:
-        list_of_moves = ""
-        start_of_target_pad = (3,2)
-        for char_target_in_target_pad in sequence:
-            list, start_of_target_pad = move_pad(numpad, char_target_in_target_pad, start_of_target_pad)
-            # print(list + 'A', end="   ")
-            list_of_moves += list + 'A'
-        print(list_of_moves)
-        # print("")
-
-        list_of_moves_2 = ""
-        start_of_target_pad = (0,2)
-        for move in list_of_moves:
-            list, start_of_target_pad = move_pad(keypad1.pad, move, start_of_target_pad)
-            # print(list + 'A', end="   ")
-            list_of_moves_2 += list + 'A'
-        # print("")
-            
-        print(list_of_moves_2)
-        # print("v<<A>>^A<A>AvA<^AA>A<vAAA>^A")
-
-        list_of_moves_3 = ""
-        start_of_target_pad = (0,2)
-        for move in list_of_moves_2:
-            list, start_of_target_pad = move_pad(keypad1.pad, move, start_of_target_pad)
-            # print(list + 'A', end="   ")
-            list_of_moves_3 += list + 'A'
-        # print("")
-
-
-        print(list_of_moves_3)
-
-    #     print(f"{len(list_of_moves_3)}x{int(sequence[:-1])}")
-    #     result += len(list_of_moves_3) * int(sequence[:-1])
-
-    # print(result)
-
-
-def move_pad(pad, char_target_in_target_pad, start_of_target_pad):
-
-    target_loc = find_character_location(pad, char_target_in_target_pad)
-    list_of_moves = execute_moves(target_loc, start_of_target_pad)
-    return list_of_moves, target_loc
-    
-
-def execute_moves(target_loc, start_of_keypad):
-    list_of_moves = ""
-    dir0 = target_loc[0] - start_of_keypad[0]
-    dir1 = target_loc[1] - start_of_keypad[1]
-
-    # Theory 1: If one is smaller, do the smaller one first
-    # Theory 2: Decrement them at the same pace
-
-    
-    
-    char_x = ""
-    char_y = ""
-
-    if dir0 < 0:
-        char_x = '^'
-        dir0 = -dir0
-    else:
-        char_x = 'v'
-
-    if dir1 < 0:
-        char_y = '<'
-        dir1 = -dir1
-    else:
-        char_y = '>'
-
-
-
-    minimum = min(dir0, dir1)
-    maximum = max(dir0, dir1)
-
-
-    for _ in range(minimum):
-        if minimum == dir0:
-            list_of_moves += char_x
-        else:
-            list_of_moves += char_y
-
-    for _ in range(maximum):
-        if maximum == dir1:
-            list_of_moves += char_y
-        else:
-            list_of_moves += char_x
-
- 
-    
-        # if dir0 < 0:
-        #     for _ in range(-dir0):
-        #         list_of_moves += '^'
-
-        # if dir0 > 0:
-        #     for _ in range(dir0):
-        #         list_of_moves += 'v'
-
-        # if dir1 > 0:
-        #     for _ in range(dir1):
-        #         list_of_moves += '>'
-
-        # if dir1 < 0:
-        #     for _ in range(-dir1):
-        #         list_of_moves += '<'
-   
-
+        numpad_pointer = (3,2)
+        keypad_pointer = (0,2)
+        pointers = [keypad_pointer for _ in range(2)] + [numpad_pointer]
+        moves = ['<', '>', 'v', '^', 'A']
+        final_typed = ""
+        num = int(sequence[:-1])
         
-    return list_of_moves  
+
+        for c in sequence:
+            typed = ""
+            gibberish = ""
+            move = ""
+            cost = 0
+            state = [cost, pointers, gibberish, typed]
+
+            pq = PriorityQueue()
+            pq.put(state)
+
+            visited = {}
+
+            while not pq.empty():
+
+                state = pq.get()
+
+                if is_in_visited(state, visited):
+                    continue
+                mark_visited(state, visited)
+
+                for move in moves:
+                    state_new = press_key(state, move, 0)
+                    
+                    if state_new == None:
+                        continue
+                    if state_new[3] != '' and state_new[3] != c:
+                        continue
+
+                    # print(state_new[0], state_new[1])
+                    if state_new[0] > 0:
+                        if state_new[3] == c:
+                            final_typed += state_new[2]
+                            pointers = state_new[1]
+                            while not pq.empty():
+                                pq.get()
+                            break
+                        if state_new[3] != '':
+                            continue
+                    if not is_in_visited(state_new, visited):
+                        pq.put(state_new)
+        midsum = len(final_typed) * num
+        print(f"midsum for {sequence} is {midsum}")
+        total += midsum
+    print(f"Solution for Part 1: {total}")
+                    
+def press_key(state, move, level):
+
+    numpad = ['789', '456', '123', 'x0A']
+    keypad = ['x^A', '<v>']
+    ultimate_pads = [keypad for _ in range(2)] + [numpad]
+
+    pads = ultimate_pads[level:]
+    cost = state[0]
+    pointers = state[1][level:]
+    gibberish = state[2]
+    typed = state[3]
+
+    if level == 0:
+        cost += 1
+    if move == 'A':
+        if level == 0:
+            gibberish += 'A'
+        if level == len(ultimate_pads) - 1:
+            typed = pads[0][pointers[0][0]][pointers[0][1]]
+            state_new = [cost, state[1], gibberish, typed]
+            return state_new
+ 
+        next_move_loc = pointers[0] # (e.g. (1,1))
+        next_move = pads[0][next_move_loc[0]][next_move_loc[1]]
+        state_new = [cost, state[1], gibberish, typed]
+        return press_key(state_new, next_move, level + 1)
+
+    moves_alp = ['<', '>', 'v', '^']
+    moves_num = [(0,-1), (0,1), (1,0), (-1,0)]
+
+    dir = moves_num[moves_alp.index(move)]
+
+    if not path_check(gibberish, dir):
+        return None
+
+    target = tuple(map(sum, zip(pointers[0], dir)))
+
+    if is_in_grid(pads[0], target):
+        if level == 0:
+            gibberish += move
+
+        new_pointers = copy.deepcopy(state[1])
+        new_pointers[level] = target
+        new_state = [cost, new_pointers, gibberish, typed]
+        return new_state
+    return None
+
+def path_check(gibberish, dir):
+    moves_alp = ['<', '>', 'v', '^']
+    moves_num = [(0,-1), (0,1), (1,0), (-1,0)]
+
+    if gibberish:
+        last_move_in_char = gibberish[len(gibberish) - 1]
+        if last_move_in_char != 'A':
+            las_move_in_num = moves_num[moves_alp.index(last_move_in_char)]
+            joined = tuple(map(sum, zip(dir,las_move_in_num)))
+            if joined == (0,0):
+                return False
+        if len(gibberish) > 3 and not 'A' in gibberish[-4:]:
+            return False
+    return True
 
 def find_character_location(pad, char):
     for row_idx, row in enumerate(pad):
         for col_idx, col_char in enumerate(row):
             if col_char == char:
                 return (row_idx, col_idx)
+
+def make_key(state):
+    """
+    state is [cost, pointers, gibberish, typed].
+    We'll ignore cost and gibberish in the visited check 
+    and just use pointers and typed.
+    """
+    cost, pointers, gibberish, typed = state
+    # pointers is a list of (row,col). Make it a tuple of tuples so it's hashable.
+    pointers_tuple = tuple(pointers)
+    return (pointers_tuple, typed)
+
+def is_in_visited(state, visited):
+    """
+    Return True if we've been in the same pointer+typed situation 
+    at an equal or lower cost already.
+
+    'visited' could map the key -> the best (lowest) cost we've seen.
+
+    If cost >= visited[key], return True (skip it).
+    Otherwise, False.
+    """
+    cost, pointers, gibberish, typed = state
+    key = make_key(state)
+
+    if key in visited:
+        best_cost_so_far = visited[key]
+        if cost >= best_cost_so_far:
+            return True
+    return False
+
+def mark_visited(state, visited):
+    """
+    Record in visited that we've found a cheaper way 
+    (or the only way so far) to get 'key'.
+    """
+    cost, pointers, gibberish, typed = state
+    key = make_key(state)
+    visited[key] = cost
 
 if __name__ == "__main__":
     main()
