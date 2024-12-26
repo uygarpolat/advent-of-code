@@ -21,11 +21,13 @@ def main():
     pq = PriorityQueue()
 
     pads = [['x^A', '<v>'], ['x^A', '<v>'], ['789', '456', '123', 'x0A']]
-    pointers = [(0,2), (0,2), (3,2)]
+    pointers = [(0,2), (0,2), (0,2)]
 
-    sequences = ["029A"]
+    # sequences = ["0"]
+    sequences = ["A"]
     moves = ['<', '>', 'v', '^', 'A']
 
+    final_typed = ""
     for sequence in sequences:
         for c in sequence:
             typed = ""
@@ -48,18 +50,26 @@ def main():
                     
                     if state_new == None:
                         continue
-                    # print(state_new)
+                    print(state_new)
                     # input(f"Press Enter to continue...")
                     if state_new[0] > 0:
                         if state_new[3] == c: # correct char has been found
-                            print(f"Character {c} has been reached in {cost} moves, the moves were: {state_new[2]}")
+                            final_typed += state_new[2]
+                            print(f"Character {c} has been reached in {state_new[0]} moves, and cumulative moves were: {final_typed}")
                             return
-                        if state_new[2] == "<vA<AA>>^A": # "<vA<AA>>^AvAA<^A>A":
-                            print(f"BIG SUCCESS!")
-                            return
+                            while not pq.empty():
+                                pq.get()
+                            break
+                        # if state_new[2] == "<vA<AA>>^AvAA<^A>A": # "A to 0"
+                        # # if state_new[2] == "<v<A>>^AvA^A": # "A to 3"
+                        #     print(f"BIG SUCCESS!")
+                        #     print(state_new)
+                        #     return
                         if state_new[3] != '':
                             continue
+                    
                         pq.put(state_new)
+        
 
                     
 def press_key(state, move, level):
@@ -76,23 +86,44 @@ def press_key(state, move, level):
     if level == 0:
         cost += 1
     if move == 'A':
-        # input(f"entering A for {state} {move} {level}")
         if level == 0:
             gibberish += 'A'
-            # input(f"appending gibberish")
-        if level + 2 == len(ultimate_pads):
-            typed = pads[1][pointers[1][0]][pointers[1][1]]
+        if level == len(ultimate_pads) - 1:
+            typed = pads[0][pointers[0][0]][pointers[0][1]]
             state_new = [cost, state[1], gibberish, typed]
             return state_new
-        # input(f"level is {level}")
+        # if gibberish == "<v<A>>^AvA^A":
+        #     print(pointers)
+        # if level + 2 == len(ultimate_pads):
+        #     if gibberish == "<v<A>>^AvA^A":
+        #         print(pointers)
+        #     typed = pads[1][pointers[1][0]][pointers[1][1]]
+        #     state_new = [cost, state[1], gibberish, typed]
+        #     return state_new
         next_move_loc = pointers[0] # (e.g. (1,1))
-        # input(f"next_move_loc is {next_move_loc}")
         next_move = pads[0][next_move_loc[0]][next_move_loc[1]]
-        # input(f"next_move is {next_move}")
         state_new = [cost, state[1], gibberish, typed]
-        # input(f"state_new is {state_new}, next_move is {next_move}, next level is {level+1}")
         return press_key(state_new, next_move, level + 1)
     
+    # if move == 'A':
+    #     # input(f"entering A for {state} {move} {level}")
+    #     if level == 0:
+    #         gibberish += 'A'
+    #         # input(f"appending gibberish")
+    #     if gibberish == "<v<A>>^AvA^A":
+    #         print(pointers)
+    #     if level + 2 == len(ultimate_pads):
+    #         if gibberish == "<v<A>>^AvA^A":
+    #             print(pointers)
+    #         typed = pads[1][pointers[1][0]][pointers[1][1]]
+    #         state_new = [cost, state[1], gibberish, typed]
+    #         return state_new
+    #     next_move_loc = pointers[0] # (e.g. (1,1))
+    #     next_move = pads[0][next_move_loc[0]][next_move_loc[1]]
+    #     state_new = [cost, state[1], gibberish, typed]
+    #     return press_key(state_new, next_move, level + 1)
+    
+
     moves_alp = ['<', '>', 'v', '^']
     moves_num = [(0,-1), (0,1), (1,0), (-1,0)]
 
