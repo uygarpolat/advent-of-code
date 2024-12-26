@@ -58,7 +58,7 @@ def main():
                     if state_new[3] != '' and state_new[3] != c:
                         continue
 
-                    # print(state_new[0], state_new[1])
+                    # print(state_new)
                     if state_new[0] > 0:
                         if state_new[3] == c:
                             final_typed += state_new[2]
