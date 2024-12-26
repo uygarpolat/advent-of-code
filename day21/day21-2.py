@@ -20,20 +20,15 @@ def main():
 
     pq = PriorityQueue()
 
-    pads = [['x^A', '<v>'], ['x^A', '<v>'], ['789', '456', '123', 'x0A']]
-    pointers = [(0,2), (0,2), (3,2)]
-
-    # sequences = ["0"]
-    # sequences = ["029A"]
-    moves = ['<', '>', 'v', '^', 'A']
-
     total = 0
     for sequence in sequences:
-        pointers = [(0,2), (0,2), (3,2)]
+        numpad_pointer = (3,2)
+        keypad_pointer = (0,2)
+        pointers = [keypad_pointer for _ in range(2)] + [numpad_pointer]
         moves = ['<', '>', 'v', '^', 'A']
         final_typed = ""
-
         num = int(sequence[:-1])
+
         for c in sequence:
             typed = ""
             gibberish = ""
@@ -41,14 +36,9 @@ def main():
             cost = 0
             state = [cost, pointers, gibberish, typed]
             pq.put(state)
-            # print(state)
 
             while not pq.empty():
 
-                # my_queue = list(pq.queue)
-                # for queue in my_queue:
-                #     print(queue)
-                # input("Press Enter to continue...")
                 state = pq.get()
 
                 for move in moves:
@@ -56,33 +46,27 @@ def main():
                     
                     if state_new == None:
                         continue
-                    # print(state_new)
-                    # input(f"Press Enter to continue...")
                     if state_new[0] > 0:
-                        if state_new[3] == c: # correct char has been found
+                        if state_new[3] == c:
                             final_typed += state_new[2]
-                            print(f"Character {c} has been reached in {state_new[0]} moves, and cumulative moves were: {final_typed}, pointers were {state_new[1]}")
                             pointers = state_new[1]
                             while not pq.empty():
                                 pq.get()
                             break
-                        # if state_new[2] == "<vA<AA>>^AvAA<^A>A": # "A to 0"
-                        # # if state_new[2] == "<v<A>>^AvA^A": # "A to 3"
-                        #     print(f"BIG SUCCESS!")
-                        #     print(state_new)
-                        #     return
                         if state_new[3] != '':
                             continue
                     
                         pq.put(state_new)
-        
-        total += len(final_typed) * num
+        midsum = len(final_typed) * num
+        print(f"midsum for {sequence} is {midsum}")
+        total += midsum
     print(f"Solution for Part 1: {total}")
                     
 def press_key(state, move, level):
-    # pointers = [(0,2), (0,2), (3,2)]
-    # state = [cost, pointers, gibberish, typed]
-    ultimate_pads = [['x^A', '<v>'], ['x^A', '<v>'], ['789', '456', '123', 'x0A']]
+
+    numpad = ['789', '456', '123', 'x0A']
+    keypad = ['x^A', '<v>']
+    ultimate_pads = [keypad for _ in range(2)] + [numpad]
 
     pads = ultimate_pads[level:]
     cost = state[0]
@@ -104,26 +88,17 @@ def press_key(state, move, level):
         next_move = pads[0][next_move_loc[0]][next_move_loc[1]]
         state_new = [cost, state[1], gibberish, typed]
         return press_key(state_new, next_move, level + 1)
-    
-
 
     moves_alp = ['<', '>', 'v', '^']
     moves_num = [(0,-1), (0,1), (1,0), (-1,0)]
 
     dir = moves_num[moves_alp.index(move)]
 
-
-    if gibberish:
-        last_move_in_char = gibberish[len(gibberish) - 1]
-        if last_move_in_char != 'A':
-            las_move_in_num = moves_num[moves_alp.index(last_move_in_char)]
-            joined = tuple(map(sum, zip(dir,las_move_in_num)))
-            if joined == (0,0):
-                return None
+    if not path_check(gibberish, dir):
+        return None
 
     target = tuple(map(sum, zip(pointers[0], dir)))
 
-    # input(f"target is {target}")
     if is_in_grid(pads[0], target):
         if level == 0:
             gibberish += move
@@ -131,9 +106,23 @@ def press_key(state, move, level):
         new_pointers = copy.deepcopy(state[1])
         new_pointers[level] = target
         new_state = [cost, new_pointers, gibberish, typed]
-        # input(f"{new_state}")
         return new_state
     return None
+
+def path_check(gibberish, dir):
+    moves_alp = ['<', '>', 'v', '^']
+    moves_num = [(0,-1), (0,1), (1,0), (-1,0)]
+
+    if gibberish:
+        last_move_in_char = gibberish[len(gibberish) - 1]
+        if last_move_in_char != 'A':
+            las_move_in_num = moves_num[moves_alp.index(last_move_in_char)]
+            joined = tuple(map(sum, zip(dir,las_move_in_num)))
+            if joined == (0,0):
+                return False
+        if len(gibberish) > 3 and not 'A' in gibberish[-4:]:
+            return False
+    return True
 
 def find_character_location(pad, char):
     for row_idx, row in enumerate(pad):
