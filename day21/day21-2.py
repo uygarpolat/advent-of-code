@@ -18,16 +18,17 @@ def main():
     with open(file_path, 'r') as file:
         sequences = [line.strip() for line in file]
 
-    pq = PriorityQueue()
+    # pq = PriorityQueue()
 
     total = 0
     for sequence in sequences:
         numpad_pointer = (3,2)
         keypad_pointer = (0,2)
-        pointers = [keypad_pointer for _ in range(2)] + [numpad_pointer]
+        pointers = [keypad_pointer for _ in range(25)] + [numpad_pointer]
         moves = ['<', '>', 'v', '^', 'A']
         final_typed = ""
         num = int(sequence[:-1])
+        
 
         for c in sequence:
             typed = ""
@@ -35,17 +36,29 @@ def main():
             move = ""
             cost = 0
             state = [cost, pointers, gibberish, typed]
+
+            pq = PriorityQueue()
             pq.put(state)
+
+            visited = {}
 
             while not pq.empty():
 
                 state = pq.get()
+
+                if is_in_visited(state, visited):
+                    continue
+                mark_visited(state, visited)
 
                 for move in moves:
                     state_new = press_key(state, move, 0)
                     
                     if state_new == None:
                         continue
+                    if state_new[3] != '' and state_new[3] != c:
+                        continue
+
+                    print(state_new[0], state_new[1])
                     if state_new[0] > 0:
                         if state_new[3] == c:
                             final_typed += state_new[2]
@@ -55,7 +68,7 @@ def main():
                             break
                         if state_new[3] != '':
                             continue
-                    
+                    if not is_in_visited(state_new, visited):
                         pq.put(state_new)
         midsum = len(final_typed) * num
         print(f"midsum for {sequence} is {midsum}")
@@ -66,7 +79,7 @@ def press_key(state, move, level):
 
     numpad = ['789', '456', '123', 'x0A']
     keypad = ['x^A', '<v>']
-    ultimate_pads = [keypad for _ in range(2)] + [numpad]
+    ultimate_pads = [keypad for _ in range(25)] + [numpad]
 
     pads = ultimate_pads[level:]
     cost = state[0]
@@ -129,6 +142,45 @@ def find_character_location(pad, char):
         for col_idx, col_char in enumerate(row):
             if col_char == char:
                 return (row_idx, col_idx)
+
+def make_key(state):
+    """
+    state is [cost, pointers, gibberish, typed].
+    We'll ignore cost and gibberish in the visited check 
+    and just use pointers and typed.
+    """
+    cost, pointers, gibberish, typed = state
+    # pointers is a list of (row,col). Make it a tuple of tuples so it's hashable.
+    pointers_tuple = tuple(pointers)
+    return (pointers_tuple, typed)
+
+def is_in_visited(state, visited):
+    """
+    Return True if we've been in the same pointer+typed situation 
+    at an equal or lower cost already.
+
+    'visited' could map the key -> the best (lowest) cost we've seen.
+
+    If cost >= visited[key], return True (skip it).
+    Otherwise, False.
+    """
+    cost, pointers, gibberish, typed = state
+    key = make_key(state)
+
+    if key in visited:
+        best_cost_so_far = visited[key]
+        if cost >= best_cost_so_far:
+            return True
+    return False
+
+def mark_visited(state, visited):
+    """
+    Record in visited that we've found a cheaper way 
+    (or the only way so far) to get 'key'.
+    """
+    cost, pointers, gibberish, typed = state
+    key = make_key(state)
+    visited[key] = cost
 
 if __name__ == "__main__":
     main()
