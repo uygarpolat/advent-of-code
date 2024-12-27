@@ -56,7 +56,7 @@ def main():
     visited_even = 0
     visited_corner_odd = 0
     visited_corner_even = 0
-    for move, loc in visited:
+    for move, _ in visited:
         if move % 2 == 0:
             visited_even += 1
         else:
