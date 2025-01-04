@@ -37,7 +37,7 @@ def main():
                     specific = result
         if result == 'A':
             counter += sum(part)
-    print(counter)
+    print(f"Solution for Part 1: {counter}")
 
 def execute_workflow(workflow, part):
     if ':' in workflow:
