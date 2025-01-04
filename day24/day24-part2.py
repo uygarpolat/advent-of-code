@@ -13,9 +13,9 @@ def solve_part2(hailstones):
     for i, (px, py, pz, vx, vy, vz) in enumerate(hailstones):
         t = Real(f't_{i}')
         
-        solver.add(rx + vrx * t == px + vx * t)  # x coordinate
-        solver.add(ry + vry * t == py + vy * t)  # y coordinate
-        solver.add(rz + vrz * t == pz + vz * t)  # z coordinate
+        solver.add(rx + vrx * t == px + vx * t)
+        solver.add(ry + vry * t == py + vy * t)
+        solver.add(rz + vrz * t == pz + vz * t)
         
         solver.add(t >= 0)
     
