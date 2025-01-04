@@ -29,7 +29,8 @@ def solve_part2(hailstones):
 
 def main():
     hailstones = []
-    with open("input.txt", 'r') as file:
+    file_path = "input.txt"
+    with open(file_path, 'r') as file:
         for line in file:
             pos, vel = line.strip().split('@')
             px, py, pz = map(int, pos.split(','))
