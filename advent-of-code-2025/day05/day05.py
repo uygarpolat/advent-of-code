@@ -20,6 +20,7 @@ def main():
     ranges.sort(key=lambda x: (x[0], x[1]))
 
     for target in targets:
+        target_found = False
         for start, end in ranges:
 
             if not result2:
@@ -27,8 +28,9 @@ def main():
                 temp_for_result2 += max(0, end - new_start + 1)
                 prev = max(prev, end + 1)
 
-            if start <= target <= end:
+            if start <= target <= end and not target_found:
                 result1 += 1
+                target_found = True
                 if result2:
                     break
 
