@@ -1,28 +1,37 @@
-from collections import defaultdict
-
-
 def main():
-    filepath = "input.txt"
+    filepath = "input2.txt"
+    instructions = []
     with open(filepath, "r") as f:
-        nums = [0]
         for line in f:
-            amount = 0
-            if " " in line:
-                amount = int(line.strip().split()[1])
-            nums.append(amount)
+            instructions.append(line.strip().split())
 
-    result = 1
-    time = 0
-    book = defaultdict(int)
-    for num in nums:
-        time += 1
-        book[time] = result
-        if num:
-            time += 1
-        result += num
-        book[time] = result
+    x = 1
+    cycle = 0
+    signal_sum = 0
+    crt = []
 
-    print(f"Solution for Part 1: {sum(i * book[i] for i in range(20, 221, 40))}")
+    def tick():
+        nonlocal cycle, signal_sum
+        cycle += 1
+        col = (cycle - 1) % 40
+        crt.append("#" if abs(col - x) <= 1 else ".")
+        if cycle in (20, 60, 100, 140, 180, 220):
+            signal_sum += cycle * x
+
+    for inst in instructions:
+        if inst[0] == "noop":
+            tick()
+        else:
+            tick()
+            tick()
+            x += int(inst[1])
+
+    print(f"Solution for Part 1: {signal_sum}")
+
+    for i, c in enumerate(crt):
+        print(c, end="")
+        if (i + 1) % 40 == 0:
+            print()
 
 
 if __name__ == "__main__":
